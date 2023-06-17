@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NewsAPIController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewYorkTimesAPIController;
 
@@ -20,7 +19,9 @@ Route::get('/', function () {
     return 'welcome';
 });
 
-Route::get('/test', [NewsAPIController::class, 'getTopHeadlinesNewsAPI']);
 Route::get('/nycTest', [NewYorkTimesAPIController::class, 'getTopStories']);
 Route::get('/testR', [NewYorkTimesAPIController::class, 'test']);
 Route::get('/news-summary/{index}/{size}', [NewsController::class, 'getNewsSummary']);
+Route::get('/this-week-news/{size}', [NewsController::class, 'getThisWeekNews']);
+Route::get('/get-more-news/{size}', [NewsController::class, 'getMoreNews']);
+Route::get('/get-all-topics', [NewsController::class, 'getAllTopics']);

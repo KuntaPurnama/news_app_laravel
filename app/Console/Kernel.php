@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('most-popular-news:cron')->everyMinute();
         $schedule->command('review-article-news:cron')->everyMinute();
         $schedule->command('top-news:cron')->everyMinute();
+        // $schedule->command('most-recent-news:cron')->everyMinute();
     }
 
     /**

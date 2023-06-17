@@ -5,10 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use App\Models\News;
 use Elasticsearch\ClientBuilder;
-
+use Helper\ElasticsearchHelper;
 
 class NewYorkTimesAPIController extends Controller
 {
+    private $elasticsearchHelper;
+
+    public function __construct()
+    {
+        $this->elasticsearchHelper = new ElasticsearchHelper();
+    }
 
     public function test()
     {
@@ -59,18 +65,19 @@ class NewYorkTimesAPIController extends Controller
             } else {
                 $newsModel->image_url = null;
             }
-
             $newsModel->news_url = $response['url'];
             $newsModel->author = $response['byline'];
             $newsModel->source = 'New York Times';
-            $newsModel->category = $response['section'];
+            $newsModel->category = $response['section'] == 'us' ? 'U.S' : ucwords($response['section']);
             $newsModel->type = 'top_news';
             $newsModel->published_date = $response['published_date'];
             return $newsModel->toArray();
         })->toArray();
 
         News::insert($listOfNews);
-        $this->saveDataToElasticSearch($listOfNews, 'top_news');
+
+        $this->elasticsearchHelper->saveNewsDataToElasticsearch($listOfNews, 'top_news');
+        $this->elasticsearchHelper->saveNewsDataToElasticsearch($listOfNews, 'news');
     }
 
 
@@ -118,14 +125,15 @@ class NewYorkTimesAPIController extends Controller
             $newsModel->news_url = $response['url'];
             $newsModel->author = $response['byline'];
             $newsModel->source = $response['source'];
-            $newsModel->category = $response['section'];
+            $newsModel->category = $response['section'] == 'us' ? 'U.S' : ucwords($response['section']);
             $newsModel->type = 'most_popular';
             $newsModel->published_date = $response['published_date'];
             return $newsModel->toArray();
         })->toArray();
 
         News::insert($listOfNews);
-        $this->saveDataToElasticSearch($listOfNews, 'most_popular_news');
+        $this->elasticsearchHelper->saveNewsDataToElasticsearch($listOfNews, 'most_popular_news');
+        $this->elasticsearchHelper->saveNewsDataToElasticsearch($listOfNews, 'news');
     }
 
     public function getReviewArticle()
@@ -165,46 +173,14 @@ class NewYorkTimesAPIController extends Controller
             $newsModel->news_url = $response['link']['url'];
             $newsModel->author = $response['byline'];
             $newsModel->source = 'New York Times';
-            $newsModel->category = 'review';
+            $newsModel->category = 'Review';
             $newsModel->type = 'review_article';
             $newsModel->published_date = $response['publication_date'];
             return $newsModel->toArray();
         })->toArray();
 
         News::insert($listOfNews);
-        $this->saveDataToElasticSearch($listOfNews, 'review_article_news');
-    }
-
-    private function saveDataToElasticSearch($news, $index)
-    {
-        $host = env('ELASTICSEARCH_HOSTS');
-        $elasticsearch = ClientBuilder::create()
-            ->setHosts([$host])
-            ->build();
-
-        $latestData = News::orderBy('created_at', 'desc')
-            ->take(count($news))
-            ->get();
-
-        foreach ($latestData as $newsModel) {
-            $params['body'][] = [
-                'index' => ['_index' => $index]
-            ];
-
-            $params['body'][] = [
-                'id' => $newsModel->id,
-                'title' => $newsModel->title,
-                'description' => $newsModel->description,
-                'imageUrl' => $newsModel->image_url,
-                'newsUrl' => $newsModel->news_url,
-                'author' => $newsModel->author,
-                'source' => $newsModel->source,
-                'category' => $newsModel->category,
-                'publishedDate' => $newsModel->published_date,
-                'created_at' => $newsModel->created_at
-            ];
-        }
-
-        $elasticsearch->bulk($params);
+        $this->elasticsearchHelper->saveNewsDataToElasticsearch($listOfNews, 'review_article_news');
+        $this->elasticsearchHelper->saveNewsDataToElasticsearch($listOfNews, 'news');
     }
 }
