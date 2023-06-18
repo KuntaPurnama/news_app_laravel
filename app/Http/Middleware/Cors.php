@@ -16,9 +16,9 @@ class Cors
     public function handle(Request $request, Closure $next): Response
     {
         return $next($request)
-            ->header('Access-Control-Allow-Credentials', 'true')
             ->header('Access-Control-Allow-Origin', 'http://localhost:3000')
             ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-xsrf-token');
+            ->header('Access-Control-Allow-Headers', 'Origin, Accept, Content-Type, Authorization, x-xsrf-token')
+            ->header('Access-Control-Allow-Credentials', 'true');
     }
 }
