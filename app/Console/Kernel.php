@@ -17,9 +17,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('most-popular-news:cron')->everyMinute();
-        $schedule->command('review-article-news:cron')->everyMinute();
-        $schedule->command('top-news:cron')->everyMinute();
+        // $schedule->command('most-popular-news:cron')->everyMinute();
+        // $schedule->command('review-article-news:cron')->everyMinute();
+        // $schedule->command('top-news:cron')->everyMinute();
         // $schedule->command('most-recent-news:cron')->everyMinute();
     }
 

@@ -66,7 +66,7 @@ class NewYorkTimesAPIController extends Controller
                 $newsModel->image_url = null;
             }
             $newsModel->news_url = $response['url'];
-            $newsModel->author = $response['byline'];
+            $newsModel->author = $response['byline'] != null ? $response['byline'] : 'anonymus';
             $newsModel->source = 'New York Times';
             $newsModel->category = $response['section'] == 'us' ? 'U.S' : ucwords($response['section']);
             $newsModel->type = 'top_news';
@@ -123,7 +123,7 @@ class NewYorkTimesAPIController extends Controller
             }
 
             $newsModel->news_url = $response['url'];
-            $newsModel->author = $response['byline'];
+            $newsModel->author = $response['byline'] != null ? $response['byline'] : 'anonymus';
             $newsModel->source = $response['source'];
             $newsModel->category = $response['section'] == 'us' ? 'U.S' : ucwords($response['section']);
             $newsModel->type = 'most_popular';
@@ -154,7 +154,7 @@ class NewYorkTimesAPIController extends Controller
                 'data' => true,
             ]);
         } catch (\Exception $e) {
-            info("API ERROR", ["messge", $e->getMessage()]);
+            info("API ERROR REVIEW", ["messge", $e->getMessage()]);
             return response()->json([
                 'code' => 500,
                 'status' => 'INTERNAL_SERVER_ERROR',
@@ -171,7 +171,7 @@ class NewYorkTimesAPIController extends Controller
             $newsModel->description = $response['summary_short'];
             $newsModel->image_url = $response['multimedia']['src'];
             $newsModel->news_url = $response['link']['url'];
-            $newsModel->author = $response['byline'];
+            $newsModel->author = $response['byline'] != null ? $response['byline'] : 'anonymus';
             $newsModel->source = 'New York Times';
             $newsModel->category = 'Review';
             $newsModel->type = 'review_article';

@@ -20,7 +20,7 @@ class NewsController extends Controller
 
     public function getNewsSummary($index, $size)
     {
-        $twoDaysAgo = \Carbon\Carbon::now()->subDays(2)->format('Y-m-d');
+        $twoDaysAgo = \Carbon\Carbon::now()->subDays(30)->format('Y-m-d');
         $params = [
             'index' => $index,
             'body' => [
@@ -220,11 +220,11 @@ class NewsController extends Controller
 
             //Current
             $thisWeek = \Carbon\Carbon::now()->startOfWeek();
-            $category = $request->input('category');
-            $index = $request->input('index');
-            $author = $request->input('author');
-            $source = $request->input('source');
-            $publishedDate = $request->input('publishedDate');
+            $category = !$request->input('category') ? null : $request->input('category');
+            $index = !$request->input('index') ? null : 'news';
+            $author = !$request->input('author') ? null : $request->input('author');
+            $source = !$request->input('source') ? null : $request->input('source');
+            $publishedDate = !$request->input('publishedDate') ? null : $request->input('publishedDate');
 
             $params = [
                 'index' => $index,

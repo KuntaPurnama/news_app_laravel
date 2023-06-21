@@ -19,7 +19,7 @@ class NewsAPIController extends Controller
     {
         try {
             $apiKey = env('NEWS_API_KEY');
-            $url = 'https://newsapi.org/v2/top-headlines?country=us&category=' . $category . '&apiKey=' . $apiKey . '&page=1&pageSize=5';
+            $url = 'https://newsapi.org/v2/top-headlines?country=us&category=' . $category . '&apiKey=' . $apiKey . '&page=1&pageSize=10';
             $response = Http::get($url);
             $responseData = $response->json();
 
@@ -30,7 +30,7 @@ class NewsAPIController extends Controller
                     $newsModel->description = $response['description'];
                     $newsModel->image_url = $response['urlToImage'];
                     $newsModel->news_url = $response['url'];
-                    $newsModel->author = $response['author'];
+                    $newsModel->author = $response['author'] != null ? $response['author'] : 'anonymus';
                     $newsModel->source = $response['source']['name'];
                     $newsModel->category = ucwords($category);
                     $newsModel->type = 'top_news';

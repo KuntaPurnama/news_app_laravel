@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - 8000:8000
+        volumes:
+            - .:/app
+            - ./.env:/app/.env
+        environment:
+            - APP_ENV=local
+        depends_on:
+            - db
+            - elasticsearch
+
+    db:
+        image: postgres:12
+        ports:
+            - 5432:5432
+        restart: always
+        environment:
+            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_USER=${DB_USERNAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+        environment:
+            - discovery.type=single-node
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        ports:
+            - 9200:9200
+            - 9300:9300

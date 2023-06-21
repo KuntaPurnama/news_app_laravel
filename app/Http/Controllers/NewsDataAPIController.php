@@ -18,6 +18,7 @@ class NewsDataAPIController extends Controller
     public function getMostRecentNews()
     {
         try {
+            info("called?");
             $apiKey = env('NEWS_DATA_API_KEY');
             $url = 'https://newsdata.io/api/1/news?apikey=' . $apiKey . '&language=en';
             $response = Http::get($url);
@@ -33,7 +34,7 @@ class NewsDataAPIController extends Controller
                     if ($response['creator'] != null && count($response['creator']) > 0) {
                         $newsModel->author = strtolower($response['creator'][0]);
                     } else {
-                        $newsModel->author = null;
+                        $newsModel->author = 'anonymus';
                     }
 
                     $newsModel->source = $response['source_id'];
@@ -47,7 +48,6 @@ class NewsDataAPIController extends Controller
                     $newsModel->type = 'recent_news';
                     $newsModel->published_date = $response['pubDate'];
 
-                    info("isi", [$newsModel]);
                     return $newsModel->toArray();
                 })->toArray();
 

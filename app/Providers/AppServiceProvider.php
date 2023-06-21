@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Artisan;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +12,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // $this->app->afterResolving(function () {
+        //     Artisan::call('migrate', ['--force' => true]);
+        //     Artisan::call('artisan migrate schedule:run');
+        // });
     }
 
     /**
